@@ -62,7 +62,6 @@ async function checkSlots() {
     // Récupère la date du jour
     const today = new Date();
     const currentHour = today.getHours();
-    console.log('Heure actuelle : ', currentHour);
 
     await page.waitForSelector('div.value');
 
