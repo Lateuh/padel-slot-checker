@@ -11,15 +11,11 @@ function formatToday() {
 }
 
 function skippingThisDay(day) {
-  return LIST_OF_DAYS_NO_SLOT.includes(day.substring(0, 3));
-}
-
-function skippingThisSpecificDay(day) {
-  return LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED.includes(day);
+  return LIST_OF_DAYS_NO_SLOT.includes(day.substring(0, 3)) || LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED.includes(day);
 }
 
 const LIST_OF_DAYS_NO_SLOT = ["Ven", "Sam", "Dim"];
 const LIST_OF_DAYS_SEVENTEEN_IS_OK = ["Mer"];
 const LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED = ["Lun14Avr"]
 
-module.exports = { skippingThisDay, formatToday, skippingThisSpecificDay };
+module.exports = { skippingThisDay, formatToday };

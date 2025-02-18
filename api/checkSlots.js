@@ -5,32 +5,33 @@ const { formatToday, skippingThisDay, skippingThisSpecificDay } = require('../ut
 const { delay } = require('../utils/systemUtils');
 
 
-module.exports = async (req, res) => {
+async function checkSlots() {
   const browser = await puppeteer.launch({ headless: true });
   const [page] = await browser.pages();
 
-  // Ecoute la console du navigateur
-  if (process.env.NODE_ENV === 'dev') {
-    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
-  }
-
   try {
+    // Ecoute la console du navigateur
+    if (process.env.NODE_ENV === 'dev') {
+      page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+    }
+
+
     // Accès à la page d'accueil du site
     await page.setDefaultTimeout(25000);
-    await page.setViewport({width: 2136, height: 920});
-    await page.goto(process.env.BASE_URL, { waitUntil: 'networkidle0'});
+    await page.setViewport({ width: 2136, height: 920 });
+    await page.goto(process.env.PADEL_BASE_URL, { waitUntil: 'networkidle0' });
     console.log('Page d\'accueil chargée.');
 
 
     // Connexion au compte utilisateur
     await page.locator('h4 ::-p-text(Se connecter)').click();
-    await page.waitForSelector('input[name="ion-input-0"]', {visible: true});
-    await page.type('input[name="ion-input-0"]', process.env.USERNAME);
+    await page.waitForSelector('input[name="ion-input-0"]', { visible: true });
+    await page.type('input[name="ion-input-0"]', process.env.PADEL_USERNAME);
     await delay(2000);
     await page.locator('div ::-p-text(Valider mon email)').click();
 
-    await page.waitForSelector('input[type="password"]', {visible: true});
-    await page.type('input[type="password"]', process.env.PASSWORD);
+    await page.waitForSelector('input[type="password"]', { visible: true });
+    await page.type('input[type="password"]', process.env.PADEL_PASSWORD);
     await delay(2000);
     await page.locator('div ::-p-text(Valider)').click();
 
@@ -44,7 +45,7 @@ module.exports = async (req, res) => {
     } else {
       console.log('Connexion utilisateur réussie.');
     }
-    
+
 
     // Accès à la page des terrains en ciblant le troisième élément item-title
     await page.evaluate(() => {
@@ -73,17 +74,17 @@ module.exports = async (req, res) => {
 
     // On clique sur un bouton pour changer de créneau horaire élargi
     while (!goodSlot && attempts < MAX_ATTEMPTS) {
-        if (currentHour < 16) {
-            await page.evaluate(() => {
-                document.querySelector('.btn-arrow-right')?.click();
-            });
-        } else if (currentHour >= 20) {
-            await page.evaluate(() => {
-              document.querySelector('.btn-arrow-left')?.click();
-          });
-        }
-        goodSlot = await page.$eval('.value', el => el.innerText) === '16:00 - 20:00';
-        attempts++;
+      if (currentHour < 16) {
+        await page.evaluate(() => {
+          document.querySelector('.btn-arrow-right')?.click();
+        });
+      } else if (currentHour >= 20) {
+        await page.evaluate(() => {
+          document.querySelector('.btn-arrow-left')?.click();
+        });
+      }
+      goodSlot = await page.$eval('.value', el => el.innerText) === '16:00 - 20:00';
+      attempts++;
     }
 
     if (!goodSlot) {
@@ -112,9 +113,9 @@ module.exports = async (req, res) => {
       let daySelected = await page.evaluate(() => {
         return document.querySelectorAll('.date-slot')[1].childNodes[0].textContent;
       });
-      console.log('Jour ' + numberOfDaysAfterToday  + ' sélectionné : ' + daySelected);
+      console.log('J+' + numberOfDaysAfterToday + ' sélectionné : ' + daySelected);
 
-      const skipThisDay = skippingThisDay(daySelected) || skippingThisSpecificDay(daySelected);
+      const skipThisDay = skippingThisDay(daySelected);
 
       let possibleSlotIndex = -1;
 
@@ -126,7 +127,7 @@ module.exports = async (req, res) => {
         // On récupère tous les créneaux de 19h et on prend l'index du premier
         possibleSlotIndex = await page.evaluate(() => {
           const possibleSlotNode = document.querySelectorAll('span.time');
-          return  Array.from(possibleSlotNode).findIndex((slot) => slot.innerText === '19:00');
+          return Array.from(possibleSlotNode).findIndex((slot) => slot.innerText === '19:00');
         });
         if (possibleSlotIndex !== -1) {
           slotFound = true;
@@ -139,12 +140,10 @@ module.exports = async (req, res) => {
 
         if (daySelected === formatToday()) {
           console.log('Tentative d\'envoi de mail...');
-          await sendEmailNotification(process.env.USERNAME, daySelected + ' SET PADEL AUTO', 'Créneau de 19h trouvé le ' + daySelected);
-          console.log('Mail envoyé avec succès.');
+          await sendEmailNotification(process.env.PADEL_USERNAME, daySelected + ' SET PADEL AUTO', 'Créneau de 19h trouvé le ' + daySelected);
         } else {
           console.log('Tentative d\'envoi de mail...');
-          await sendEmailNotification(process.env.USERNAME, daySelected + ' SET PADEL AUTO', 'Créneau de 19h trouvé le ' + daySelected);
-          console.log('Mail envoyé avec succès.');
+          await sendEmailNotification(process.env.PADEL_USERNAME, daySelected + ' SET PADEL AUTO', 'Créneau de 19h trouvé le ' + daySelected);
 
           console.log('Tentative de réservation automatique...')
 
@@ -175,17 +174,15 @@ module.exports = async (req, res) => {
       }
     }
 
-
+    return slotFound;
+  } catch (error) {
+    throw error;
+  } finally {
     await browser.close();
     console.log('Navigateur fermé.');
-
-    if (slotFound) {
-      res.status(200).json({ success: true, message: 'Créneau de 19h trouvé.' });
-    } else {
-      res.status(404).json({ success: false, message: 'Aucun créneau de 19h trouvé.' });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, error: error.message });
   }
+
 };
+
+
+module.exports = checkSlots;

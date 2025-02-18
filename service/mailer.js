@@ -5,14 +5,14 @@ const dotenv = require('dotenv').config();
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: process.env.USERNAME,
+    user: process.env.PADEL_USERNAME,
     pass: process.env.GMAIL_PASS,
   },
 });
 
 async function sendEmailNotification(toEmail, subject, text) {
   const mailOptions = {
-    from: process.env.GMAIL_USER,
+    from: process.env.PADEL_USERNAME,
     to: toEmail,
     subject: subject,
     text: text,
