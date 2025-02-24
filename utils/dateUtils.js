@@ -16,6 +16,6 @@ function skippingThisDay(day) {
 
 const LIST_OF_DAYS_NO_SLOT = ["Ven", "Sam", "Dim"];
 const LIST_OF_DAYS_SEVENTEEN_IS_OK = ["Mer"];
-const LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED = ["Lun14Avr"]
+const LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED = ["Jeu27Fév", "Lun14Avr"]
 
 module.exports = { skippingThisDay, formatToday };
