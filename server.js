@@ -23,5 +23,5 @@ app.get('/api/checkSlots', async (req, res) => {
 const server = app.listen(port, () => {
     const host = server.address().address;
     const port = server.address().port;
-    console.log(`Serveur démarré sur : https://${host}:${port}`);
+    console.log('Serveur démarré sur : http://' + host + ':' + port);
 });
