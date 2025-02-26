@@ -12,14 +12,12 @@ async function checkSlots() {
     const [page] = await browser.pages();
 
     // Ecoute la console du navigateur
-    if (process.env.NODE_ENV === 'debug') {
-      page.on('console', msg => console.log('PAGE LOG:', msg.text()));
-    }
+    if (process.env.NODE_ENV === 'debug') page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 
     // Accès à la des terrains
     await page.setDefaultTimeout(25000);
     await page.goto(process.env.PADEL_PLAYGROUND_URL, { waitUntil: 'networkidle0' });
-    console.log('Page des terrains chargée.');
+    if (process.env.NODE_ENV === 'debug') console.log('Page des terrains chargée.');
 
     // Récupère la date du jour
     const today = new Date();
@@ -39,7 +37,7 @@ async function checkSlots() {
         }
       });
     });
-    console.log('Créneau horaire 19:00 sélectionné.');
+    if (process.env.NODE_ENV === 'debug') console.log('Créneau horaire 19:00 sélectionné.');
 
     // Recherche d'un créneau de 19h disponible dans les 9 prochains jours 
     return await findSlotAndSendMail(page);
@@ -47,7 +45,7 @@ async function checkSlots() {
     throw error;
   } finally {
     await browser.close();
-    console.log('Navigateur fermé.');
+    if (process.env.NODE_ENV === 'debug') console.log('Navigateur fermé.');
   }
 
 };
@@ -60,14 +58,14 @@ async function findSlotAndSendMail(page) {
     let daySelected = await page.evaluate(() => {
       return document.querySelectorAll('.date-slot')[1].childNodes[0].textContent;
     });
-    console.log('J+' + numberOfDaysAfterToday + ' sélectionné : ' + daySelected);
+    if (process.env.NODE_ENV === 'debug') console.log('J+' + numberOfDaysAfterToday + ' sélectionné : ' + daySelected);
 
     const skipThisDay = skippingThisDay(daySelected);
 
     let possibleSlotIndex = -1;
 
     if (skipThisDay) {
-      console.log('-SKIP- On ne veut pas de créneau ce jour.');
+      if (process.env.NODE_ENV === 'debug') console.log('-SKIP- On ne veut pas de créneau ce jour.');
     } else {
       await page.waitForSelector('div.playground-slot', { visible: true });
 
@@ -84,7 +82,7 @@ async function findSlotAndSendMail(page) {
     if (slotFound) {
       console.log('Un créneau de 19h est disponible le ', daySelected);
 
-      console.log('Tentative d\'envoi de mail...');
+      if (process.env.NODE_ENV === 'debug') console.log('Tentative d\'envoi de mail...');
       await sendEmailNotification(process.env.PADEL_USERNAME, daySelected + ' SET PADEL AUTO', 'Créneau de 19h trouvé le ' + daySelected);
 
       break;
@@ -122,7 +120,7 @@ async function selectHourRange(page, currentHour) {
   if (!goodSlot) {
     throw new Error('Erreur lors de la modification du créneau horaire élargi.');
   } else {
-    console.log('Créneau horaire élargi 16:00 - 20:00 sélectionné.');
+    if (process.env.NODE_ENV === 'debug') console.log('Créneau horaire élargi 16:00 - 20:00 sélectionné.');
   }
 }
 
@@ -146,7 +144,7 @@ async function connectAccount(page) {
   if (elementHandle) {
     throw new Error('Erreur lors de la connexion utilisateur.');
   } else {
-    console.log('Connexion utilisateur réussie.');
+    if (process.env.NODE_ENV === 'debug') console.log('Connexion utilisateur réussie.');
   }
  }
 
