@@ -83,7 +83,7 @@ async function findSlotAndSendMail(page) {
       console.log('Un créneau de 19h est disponible le ', daySelected);
 
       if (process.env.NODE_ENV === 'debug') console.log('Tentative d\'envoi de mail...');
-      await sendEmailNotification(process.env.PADEL_USERNAME, daySelected + ' SET PADEL AUTO', 'Créneau de 19h trouvé le ' + daySelected);
+      await sendEmailNotification(daySelected + ' SET PADEL AUTO', 'Créneau de 19h trouvé le ' + daySelected);
 
       break;
     } else {

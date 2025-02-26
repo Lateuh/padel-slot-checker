@@ -10,10 +10,12 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function sendEmailNotification(toEmail, subject, text) {
+async function sendEmailNotification(subject, text) {
+  const toEmails = process.env.EMAIL_SUBSCRIBERS.split(',');
+
   const mailOptions = {
     from: process.env.PADEL_USERNAME,
-    to: toEmail,
+    to: toEmails,
     subject: subject,
     text: text,
   };
