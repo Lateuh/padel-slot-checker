@@ -8,7 +8,9 @@ const port = process.env.PORT || 3000;
 // Route pour vérifier les créneaux disponibles
 app.get('/api/checkSlots', async (req, res) => {
     try {
+        console.log('Début de la recherche de créneau.');
         const slotFound = await checkSlots();
+        console.log('Fin de la recherche de créneau.');
         if (slotFound) {
             res.status(200).json({ success: true, message: 'Créneau de 19h trouvé.' });
         } else {
@@ -23,5 +25,5 @@ app.get('/api/checkSlots', async (req, res) => {
 const server = app.listen(port, () => {
     const host = server.address().address;
     const port = server.address().port;
-    console.log(`Serveur démarré sur : https://${host}:${port}`);
+    console.log('Serveur démarré sur : http://' + host + ':' + port);
 });
