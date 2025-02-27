@@ -15,7 +15,7 @@ async function checkSlots() {
     if (process.env.NODE_ENV === 'debug') page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 
     // Accès à la des terrains
-    await page.setDefaultTimeout(25000);
+    await page.setDefaultTimeout(45*1000);
     await page.goto(process.env.PADEL_PLAYGROUND_URL, { waitUntil: 'networkidle0' });
     if (process.env.NODE_ENV === 'debug') console.log('Page des terrains chargée.');
 
