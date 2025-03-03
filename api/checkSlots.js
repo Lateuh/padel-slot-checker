@@ -98,7 +98,7 @@ async function goNextDay(page) {
 
 // On récupère tous les créneaux de 17h30 ou 19h et on prend l'index du premier créneau disponible
 async function findSlotAvailable(page, hourSlotWanted) {
-  let possibleSlotIndex = await page.evaluate(() => {
+  let possibleSlotIndex = await page.evaluate((hourSlotWanted) => {
     const possibleSlotNode = document.querySelectorAll('span.time');
     return Array.from(possibleSlotNode).findIndex((slot) => slot.innerText === hourSlotWanted);
   });
