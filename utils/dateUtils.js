@@ -18,8 +18,13 @@ function isSeventeenOk(day) {
   return LIST_OF_DAYS_SEVENTEEN_IS_OK.includes(day.substring(0, 3));
 }
 
+function subscribersAreSleeping() {
+  const now = new Date().getHours();
+  return now < 7 || now > 0;
+}
+
 const LIST_OF_DAYS_NO_SLOT = ["Ven", "Sam", "Dim"];
 const LIST_OF_DAYS_SEVENTEEN_IS_OK = ["Mer"];
 const LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED = ["Mer05Mar", "Mar11Mar", "Lun14Avr"]
 
-module.exports = { skippingThisDay, formatToday, isSeventeenOk };
+module.exports = { skippingThisDay, formatToday, isSeventeenOk, subscribersAreSleeping };

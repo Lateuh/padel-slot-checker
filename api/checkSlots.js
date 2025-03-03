@@ -28,18 +28,10 @@ async function checkSlots() {
     // Vérifie si la div "value" a un texte qui correspond à 16:00 - 20:00
     await selectHourRange(page, currentHour);
 
-    // Sélection de l'horaire 19:00
-    await page.evaluate(() => {
-      const timeSlots = document.querySelectorAll('.slot-time');
-      timeSlots.forEach((slot) => {
-        if (slot.innerText.trim() === '19:00') {
-          slot.click();
-        }
-      });
-    });
-    if (process.env.NODE_ENV === 'debug') console.log('Créneau horaire 19:00 sélectionné.');
+    // Sélection de l'horaire 19:00 par défaut
+    await selectSlotHour(page);
 
-    // Recherche d'un créneau de 19h disponible dans les 9 prochains jours 
+    // Recherche d'un créneau intéressant disponible dans les 9 prochains jours 
     return await findSlotAndSendMail(page);
   } catch (error) {
     throw error;
@@ -50,6 +42,17 @@ async function checkSlots() {
 
 };
 
+async function selectSlotHour(page, hourSlotWanted = '19:00') {
+  await page.evaluate((hourSlotWanted) => {
+    const timeSlots = document.querySelectorAll('.slot-time');
+    timeSlots.forEach((slot) => {
+      if (slot.innerText.trim() === hourSlotWanted) {
+        slot.click();
+      }
+    });
+  });
+  if (process.env.NODE_ENV === 'debug') console.log('Créneau horaire ' + hourSlotWanted + ' sélectionné.');
+}
 
 async function findSlotAndSendMail(page) {
   let slotFound = '';
@@ -69,9 +72,11 @@ async function findSlotAndSendMail(page) {
     await page.waitForSelector('div.playground-slot', { visible: true });
 
     if (isSeventeenOk(daySelected)) {
-      if (process.env.NODE_ENV === 'debug') console.log('Le créneau de 17h30 est ok pour ce jour.');
+      if (process.env.NODE_ENV === 'debug') console.log('Recherche créneau de 17h30 pour ce jour...');
+      await selectSlotHour(page, '17:30');
       slotFound = await findSlotAvailable(page, '17:30');
       if (slotFound !== '') sendMail(daySelected, slotFound);
+      await selectSlotHour(page, '19:00');
     }
 
     slotFound = await findSlotAvailable(page, '19:00');
@@ -86,7 +91,7 @@ async function sendMail(daySelected, slotFound) {
   console.log('Un créneau de ' + slotFound + ' est disponible le ' + daySelected);
 
   if (process.env.NODE_ENV === 'debug') console.log('Tentative d\'envoi de mail...');
-  await sendEmailNotification(daySelected + ' SET PADEL AUTO', 'Créneau de ' + slotFound + ' trouvé le ' + daySelected);
+  await sendEmailNotification(daySelected + ' ' + slotFound + ' SET PADEL AUTO', 'Créneau de ' + slotFound + ' trouvé le ' + daySelected);
 }
 
 // On sélectionne le jour suivant (le 3ème élément de la liste)
