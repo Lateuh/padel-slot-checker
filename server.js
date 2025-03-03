@@ -11,10 +11,10 @@ app.get('/api/checkSlots', async (req, res) => {
         console.log('Début de la recherche de créneau.');
         const slotFound = await checkSlots();
         console.log('Fin de la recherche de créneau.');
-        if (slotFound) {
-            res.status(200).json({ success: true, message: 'Créneau de 19h trouvé.' });
+        if (slotFound !== '') {
+            res.status(200).json({ success: true, message: 'Créneau de ' + slotFound + ' trouvé.' });
         } else {
-            res.status(404).json({ success: false, message: 'Aucun créneau de 19h trouvé.' });
+            res.status(404).json({ success: false, message: 'Aucun créneau intéressant trouvé.' });
         }
     } catch (error) {
         console.error(error);
