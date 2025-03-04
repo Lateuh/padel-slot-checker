@@ -1,8 +1,8 @@
 const puppeteer = require('puppeteer');
 const dotenv = require('dotenv').config();
 const { sendEmailNotification } = require('../service/mailer');
-const { skippingThisDay, isSeventeenOk } = require('../utils/dateUtils');
-const { delay } = require('../utils/systemUtils');
+const { skippingThisDay, isSeventeenOk } = require('../utils/date_utils');
+const { delay } = require('../utils/system_utils');
 
 
 async function checkSlots() {

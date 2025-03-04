@@ -1,7 +1,7 @@
 {
   "name": "set-padel-slot-checker",
   "version": "1.0.0",
-  "main": "checkSlots.js",
+  "main": "check_slots.js",
   "scripts": {
     "start": "node server.js"
   },
