@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const dotenv = require('dotenv').config();
-const { sendEmailNotification } = require('../service/mailer');
+const { sendEmailNotification } = require('../service/mail/mailer');
 const { skippingThisDay, isSeventeenOk } = require('../utils/date_utils');
 const { delay } = require('../utils/system_utils');
 

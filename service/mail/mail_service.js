@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
-const { subscribersAreSleeping } = require('../utils/date_utils');
+const { subscribersAreSleeping } = require('../../utils/date_utils');
 
 const HISTORY_FILE = path.join(__dirname, 'email_history.json');
 const SPAM_THRESHOLD = 2; // Nombre d'emails considéré comme spam
