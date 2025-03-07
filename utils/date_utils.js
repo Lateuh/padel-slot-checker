@@ -1,7 +1,7 @@
-function formatToday() {
-  const daysOfWeek = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
-  const monthsOfYear = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"];
+const daysOfWeek = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+const monthsOfYear = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"];
 
+function formatToday() {
   const date = new Date();
   const dayOfWeek = daysOfWeek[date.getDay()];
   const dayOfMonth = date.getDate().toString().padStart(2, '0');
@@ -11,7 +11,7 @@ function formatToday() {
 }
 
 function skippingThisDay(day) {
-  return LIST_OF_DAYS_NO_SLOT.includes(day.substring(0, 3)) || LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED.includes(day);
+  return LIST_OF_DAYS_NO_SLOT.includes(day.substring(0, 3));
 }
 
 function isSeventeenOk(day) {
@@ -23,8 +23,21 @@ function subscribersAreSleeping() {
   return now < 7 || now > 0;
 }
 
+/**
+ * Format a specific day to the format "Jeu02Sep"
+ * @param {Date} date with the 'new Date()' format
+ * @returns {string} The formatted date
+ */
+function formatSpecificDay(date) {
+  const dayOfWeek = daysOfWeek[date.getDay()];
+  const dayOfMonth = date.getDate().toString().padStart(2, '0');
+  const month = monthsOfYear[date.getMonth()];
+
+  return `${dayOfWeek}${dayOfMonth}${month}`;
+}
+
+
 const LIST_OF_DAYS_NO_SLOT = ["Ven", "Sam", "Dim"];
 const LIST_OF_DAYS_SEVENTEEN_IS_OK = ["Mer"];
-const LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED = ["Mer05Mar", "Mar11Mar", "Lun14Avr"]
 
-module.exports = { skippingThisDay, formatToday, isSeventeenOk, subscribersAreSleeping };
+module.exports = { skippingThisDay, formatToday, isSeventeenOk, subscribersAreSleeping, formatSpecificDay };

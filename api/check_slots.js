@@ -3,7 +3,9 @@ const dotenv = require('dotenv').config();
 const { sendEmailNotification } = require('../service/mail/mailer');
 const { skippingThisDay, isSeventeenOk } = require('../utils/date_utils');
 const { delay } = require('../utils/system_utils');
+const { getNotificationsDates } = require('../service/calendar/calendar_service');
 
+let LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED = [];
 
 async function checkSlots() {
   const browser = await puppeteer.launch({ headless: true });
@@ -30,6 +32,11 @@ async function checkSlots() {
 
     // Sélection de l'horaire 19:00 par défaut
     await selectSlotHour(page);
+
+    // Récupération des dates de notifications désactivées
+    await getNotificationsDates().then((notifications) => {
+      LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED = notifications;
+    });
 
     // Recherche d'un créneau intéressant disponible dans les 9 prochains jours 
     return await findSlotAndSendMail(page);
@@ -65,6 +72,12 @@ async function findSlotAndSendMail(page) {
 
     if (skippingThisDay(daySelected)) {
       if (process.env.NODE_ENV === 'debug') console.log('-SKIP- On ne veut pas de créneau ce jour.');
+      await goNextDay(page);
+      continue;
+    }
+
+    if (await LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED.includes(daySelected)) {
+      if (process.env.NODE_ENV === 'debug') console.log('-SKIP- Notifications désactivées pour ce jour.');
       await goNextDay(page);
       continue;
     }
