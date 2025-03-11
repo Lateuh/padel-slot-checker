@@ -3,4 +3,4 @@
 node_modules/
 .clinic
 logs/
-service/email_history.json
+service/mail/email_history.json

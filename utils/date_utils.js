@@ -18,9 +18,14 @@ function isSeventeenOk(day) {
   return LIST_OF_DAYS_SEVENTEEN_IS_OK.includes(day.substring(0, 3));
 }
 
+/**
+ * Check if it's a good time to send an email
+ * Sleeping between 01:00 and 06:59
+ * @returns {boolean} True if it's a good time to send an email
+ */
 function subscribersAreSleeping() {
   const now = new Date().getHours();
-  return now < 7 || now > 0;
+  return now < 7 || (now > 0 && now < 6);
 }
 
 /**

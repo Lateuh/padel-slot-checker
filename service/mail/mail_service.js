@@ -8,7 +8,7 @@ const SPAM_INTERVAL = 60 * 1000 * 60; // Intervalle de temps en millisecondes
 
 
 async function writeEmailHistory(subject) {
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date().toJSON();
     const entry = { timestamp, subject };
   
     try {
@@ -17,7 +17,8 @@ async function writeEmailHistory(subject) {
         const data = await fs.readFile(HISTORY_FILE, 'utf-8');
         history = JSON.parse(data);
       }
-  
+      
+      if (!Array.isArray(history)) history = [];
       history.push(entry);
       await fs.writeFile(HISTORY_FILE, JSON.stringify(history, null, 2), 'utf-8');
       console.log('Historique des emails mis à jour');
@@ -26,14 +27,16 @@ async function writeEmailHistory(subject) {
     }
   }
   
-  async function checkSpam() {
+  async function checkSpam(subject) {
     try {
       if (!await fileExists(HISTORY_FILE)) return false;
   
-      if (subscribersAreSleeping()) return true;
+      if (await subscribersAreSleeping()) return true;
   
       const data = await fs.readFile(HISTORY_FILE, 'utf-8');
       const history = JSON.parse(data);
+
+      if (!Array.isArray(history)) return false;
   
       const now = new Date();
       const recentEmails = history.filter(entry => (now - new Date(entry.timestamp)) <= SPAM_INTERVAL);

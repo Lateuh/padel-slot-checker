@@ -5,6 +5,6 @@ module.exports = {
     log_file : "./logs/server.log",
     time : true,
     watch : true,
-    ignore_watch : ["node_modules", ".clinic", "logs", ".git"]
+    ignore_watch : ["node_modules", ".clinic", "logs", ".git", "service/mail/email_history.json"]
   }]
 }

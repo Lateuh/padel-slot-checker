@@ -88,12 +88,12 @@ async function findSlotAndSendMail(page) {
       if (process.env.NODE_ENV === 'debug') console.log('Recherche créneau de 17h30 pour ce jour...');
       await selectSlotHour(page, '17:30');
       slotFound = await findSlotAvailable(page, '17:30');
-      if (slotFound !== '') sendMail(daySelected, slotFound);
+      if (slotFound !== '') await sendMail(daySelected, slotFound);
       await selectSlotHour(page, '19:00');
     }
 
     slotFound = await findSlotAvailable(page, '19:00');
-    if (slotFound !== '') sendMail(daySelected, slotFound);
+    if (slotFound !== '') await sendMail(daySelected, slotFound);
 
     await goNextDay(page);
   }
@@ -117,14 +117,11 @@ async function goNextDay(page) {
 // On récupère tous les créneaux de 17h30 ou 19h et on prend l'index du premier créneau disponible
 async function findSlotAvailable(page, hourSlotWanted) {
   let possibleSlotIndex = await page.evaluate((hourSlotWanted) => {
-    const possibleSlotNode = document.querySelectorAll('span.time');
-    return Array.from(possibleSlotNode).findIndex((slot) => slot.innerText === hourSlotWanted);
-  });
-  if (possibleSlotIndex !== -1) {
-    return hourSlotWanted;
-  } else {
-    return '';
-  }
+    const possibleSlotNodes = document.querySelectorAll('span.time');
+    return Array.from(possibleSlotNodes).findIndex((slot) => slot.innerText === hourSlotWanted);
+  }, hourSlotWanted);
+
+  return possibleSlotIndex !== -1 ? hourSlotWanted : '';
 }
 
 async function selectHourRange(page, currentHour) {

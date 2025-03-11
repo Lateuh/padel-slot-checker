@@ -21,7 +21,5 @@ async function getNotificationsDates() {
     return notifications;
 }
 
-// const LIST_OF_SPECIFIC_DAYS_MANUALLY_SKIPPED = getNotificationsDates();
-
 
 module.exports = { getNotificationsDates };

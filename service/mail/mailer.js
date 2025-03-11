@@ -22,13 +22,15 @@ async function sendEmailNotification(subject, text) {
     text: text,
   };
 
+  const subjectFormatted = subject.split(' ').slice(0, 2).join(' ');
+
   try {
-    const isSpamming = await checkSpam();
+    const isSpamming = await checkSpam(subjectFormatted);
 
     if (!isSpamming) {
       await transporter.sendMail(mailOptions);
       console.log('Email envoyé avec succès');
-      await writeEmailHistory();
+      await writeEmailHistory(subjectFormatted);
     } else {
       if (process.env.NODE_ENV === 'debug') console.log('Email non envoyé car spamming détecté');
     }
