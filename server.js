@@ -2,7 +2,7 @@ const express = require('express');
 const checkSlots = require('./api/check_slots');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.SLOT_CHECKER_PORT || 3000;
 
 
 // Route pour vérifier les créneaux disponibles
