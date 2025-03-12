@@ -5,3 +5,4 @@ node_modules/
 logs/
 service/mail/email_history.json
 ecosystem.config.js
+prod-files
