@@ -4,3 +4,4 @@ node_modules/
 .clinic
 logs/
 service/mail/email_history.json
+ecosystem.config.js
