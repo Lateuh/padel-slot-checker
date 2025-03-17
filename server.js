@@ -2,6 +2,7 @@ const express = require('express');
 const checkSlots = require('./api/check_slots');
 
 const app = express();
+const ip = require('ip');
 const port = process.env.SLOT_CHECKER_PORT || 3000;
 
 
@@ -22,8 +23,6 @@ app.get('/api/check-slots', async (req, res) => {
     }
 });
 
-const server = app.listen(port, () => {
-    const host = server.address().address;
-    const port = server.address().port;
-    console.log('Serveur démarré sur : http://' + host + ':' + port);
+app.listen(port, () => {
+    console.log(`Serveur démarré sur https://${ip.address()}:${port}`);
 });
