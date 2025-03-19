@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const dotenv = require('dotenv').config();
 const { sendEmailNotification } = require('../service/mail/mailer');
-const { skippingThisDay, isSeventeenOk } = require('../utils/date_utils');
+const { skippingThisDay, isSeventeenOk, switchToFrench } = require('../utils/date_utils');
 const { delay } = require('../utils/system_utils');
 const { getNotificationsDates } = require('../service/calendar/calendar_service');
 
@@ -68,6 +68,7 @@ async function findSlotAndSendMail(page) {
     let daySelected = await page.evaluate(() => {
       return document.querySelectorAll('.date-slot')[1].childNodes[0].textContent;
     });
+    switchToFrench(daySelected);
     if (process.env.NODE_ENV === 'debug') console.log('J+' + numberOfDaysAfterToday + ' sélectionné : ' + daySelected);
 
     if (skippingThisDay(daySelected)) {
