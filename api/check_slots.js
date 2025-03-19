@@ -68,7 +68,7 @@ async function findSlotAndSendMail(page) {
     let daySelected = await page.evaluate(() => {
       return document.querySelectorAll('.date-slot')[1].childNodes[0].textContent;
     });
-    switchToFrench(daySelected);
+    daySelected = switchToFrench(daySelected);
     if (process.env.NODE_ENV === 'debug') console.log('J+' + numberOfDaysAfterToday + ' sélectionné : ' + daySelected);
 
     if (skippingThisDay(daySelected)) {
