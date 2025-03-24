@@ -57,7 +57,7 @@ function switchToFrench(date) {
   if (!date) return;
   let day = date.substring(0, 3);
   if (!daysOfWeekEN.includes(day)) {
-    return;
+    return date;
   }
   
   const dayFR = daysOfWeek[daysOfWeekEN.indexOf(day)];
