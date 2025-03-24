@@ -57,7 +57,7 @@ async function selectSlotHour(page, hourSlotWanted = '19:00') {
         slot.click();
       }
     });
-  });
+  }, hourSlotWanted);
   if (process.env.NODE_ENV === 'debug') console.log('Créneau horaire ' + hourSlotWanted + ' sélectionné.');
 }
 
